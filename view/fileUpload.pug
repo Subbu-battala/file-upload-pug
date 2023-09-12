@@ -27,9 +27,31 @@ html(lang="en")
                 .col-md-6.offset-md-3 
                     .card 
                         .card-body 
-                            form(autocomplete="off",id="fileForm")
+                            //- form(autocomplete="off",method="post",action="/api/file/upload",enctype="mulitipart/form-data")
+                            form(autocomplete="off",onsubmit="submitHandler(event)",enctype="multipart/form-data")
                                 .form-group.mt-2.mb-2 
                                     label(for="doc") Select File to Upload 
-                                    input.form-control(type="file", name="doc",id="doc",required)
+                                    input.form-control(type="file", name="myFile",id="myFile",required)
                                 .form-group 
                                     input.btn.btn-success(type="submit", value="Upload")
+        script.
+            let  url = "http://localhost:5600";
+            let fDoc = document.querySelector("#myFile");
+
+
+            function submitHandler(event) {
+                event.preventDefault();
+                    let formData = new FormData();
+                    formData.append("doc",fDoc.files[0]);
+                    console.log('formData =', formData);
+
+                    fetch(`${url}/api/file/upload`, {
+                        method: "POST",
+                        body: formData
+                    }).then(res => res.json())
+                    .then( res => {
+                        alert(res.msg)
+                        window.location.href = "/"
+                    }).catch(err => alert(err.message))
+            };
+
